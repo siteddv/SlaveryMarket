@@ -1,0 +1,6 @@
+﻿services:
+  slaverymarket:
+    image: slaverymarket
+    build:
+      context: .
+      dockerfile: SlaveryMarket/Dockerfile
