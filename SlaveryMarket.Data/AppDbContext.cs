@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SlaveryMarket.Data.Entity;
-using SlaveryMarket.Data.Model;
 
 namespace SlaveryMarket.Data;
 

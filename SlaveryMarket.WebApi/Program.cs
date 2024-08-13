@@ -19,7 +19,8 @@ public class Program
 
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(
-                "User ID=postgres; Password=sa;Host=localHost; Port=5432; Database=postgres; Pooling=True; Include Error Detail=True;"));
+                "User ID=postgres; Password=sa;Host=localHost; Port=5432; Database=postgres; Pooling=True; Include Error Detail=True;", 
+                b=> b.MigrationsAssembly("SlaveryMarket.Data")));
         
         builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>()
