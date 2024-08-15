@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SlaveryMarket.Data;
 using SlaveryMarket.Data.Entity;
+using SlaveryMarket.Data.Repository;
 
 namespace SlaveryMarket;
 
@@ -25,6 +26,9 @@ public class Program
         builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
+        
+        builder.Services.AddScoped(typeof(Repository<>));
+        builder.Services.AddScoped<ProductRepository>();
 
         var app = builder.Build();
 

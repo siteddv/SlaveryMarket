@@ -1,26 +1,19 @@
+using System.ComponentModel.DataAnnotations;
 
 namespace SlaveryMarket.Data.Entity;
 
-public class Product
+public class Product : BaseEntity
 {   
-    public Product(string articul, string name, string description, decimal price)
-    {
-        Name = name;
-        Articul = articul;
-        Description = description;
-        Price = price;
-    }
-    
-    public Product(long id, string articul, string name, string description, decimal price) 
-        : this(articul, name, description, price)
-    {
-        Id = id;
-    }
-
-    public long Id { get; set; }
+    [MaxLength(50)]
     public string Name { get; set; }
+    
+    [Length(3,15)]
     public string Articul { get; set; }
+    
+    [MaxLength(500)]
     public string Description { get; set; }
+    
+    [Range(0, 1000000)]
     public decimal Price { get; set; }
 }
 

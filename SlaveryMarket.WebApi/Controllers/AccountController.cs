@@ -1,18 +1,20 @@
 using Microsoft.AspNetCore.Mvc;
 using SlaveryMarket.Data;
 using SlaveryMarket.Data.Entity;
+using SlaveryMarket.Data.Model;
+using SlaveryMarket.Data.Repository;
 
 namespace SlaveryMarket.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class AccountController : ControllerBase
+public class AccountController : BaseController
 {
-    private readonly AppDbContext _context;
+    private readonly Repository<Janar> _repository;
+    private readonly Repository<Order> _orepository;
 
-    public AccountController(AppDbContext context)
+    public AccountController(Repository<Janar> repository, Repository<Order> orepository)
     {
-        _context = context;
+        _repository = repository;
+        _orepository = orepository;
     }
 
     [HttpPost("add-janar")]
@@ -22,8 +24,7 @@ public class AccountController : ControllerBase
         {
             Gender = gender
         };
-        _context.Set<Janar>().Add(janar);
-        _context.SaveChanges();
+        _repository.Add(janar);
         
         return Ok();
     }
@@ -31,13 +32,11 @@ public class AccountController : ControllerBase
     [HttpGet("get-janars")]
     public IActionResult GetJanars()
     {
-        var janars = _context.Set<Janar>().ToList();
+        var janars = _repository.GetAll();
         if(janars.Count == 0)
         {
             return NotFound();
         }
         return Ok(janars);
     }
-    
-    
 }

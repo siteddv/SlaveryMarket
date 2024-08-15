@@ -13,4 +13,14 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     }
 
     public DbSet<Janar> Janars { get; set; }
+    public DbSet<Product> Products { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        builder.Entity<Product>()
+            .HasIndex(p => p.Articul)
+            .IsUnique();
+    }
 }
