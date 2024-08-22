@@ -1,27 +1,10 @@
-namespace SlaveryMarket.Data.Model;
+namespace SlaveryMarket.Data.Entity;
 
-public class OrderItem
+public class OrderItem : BaseEntity
 {
-    public long Id { get; set; }
-
-    // public long Id
-    // {
-    //     get => _id;
-    //     set => _id = value;
-    // }
-    //
-    // public long GetId()
-    // {
-    //     return _id;
-    // }
-    //
-    // public void SetId(long value)
-    // {
-    //     _id = value;
-    // }
-    //
-    // private long _id;
-    
     public long ProductId { get; set; }
+    public Product Product { get; set; }
     public int Amount { get; set; }
+    public long OrderId { get; set; }
+    public Order Order { get; set; }
 }

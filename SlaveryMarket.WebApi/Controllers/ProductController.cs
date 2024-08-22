@@ -24,8 +24,8 @@ public class ProductController : BaseController
             Price = product.Price
         };
         
-        _repository.Add(newProduct);
-        return Ok();
+        var addedProduct =  _repository.Add(newProduct);
+        return Ok(addedProduct);
     }
     
     [HttpGet("get-products")]
