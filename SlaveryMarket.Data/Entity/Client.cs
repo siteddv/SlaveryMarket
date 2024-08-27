@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace SlaveryMarket.Data.Entity;
 
 public class Client : BaseEntity

@@ -28,7 +28,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
 
         builder.Entity<Client>()
             .HasMany(c => c.Orders)
-            .WithOne(o => o.Client);
+            .WithOne(o => o.Client)
+            .HasForeignKey(o => o.ClientId);
 
         builder.Entity<Order>()
             .HasMany(o => o.OrderItems)

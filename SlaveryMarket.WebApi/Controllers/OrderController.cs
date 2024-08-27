@@ -12,13 +12,4 @@ public class OrderController : BaseController
     {
         _context = context;
     }
-
-    [HttpGet("get-orders")]
-    public IActionResult GetOrders()
-    {
-        var orders =  _context.Orders
-            .Include(o=> o.Client)
-            .ToList();
-        return Ok(orders);
-    }
 }
