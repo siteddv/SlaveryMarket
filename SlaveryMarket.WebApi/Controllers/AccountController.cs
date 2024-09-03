@@ -2,40 +2,32 @@ using Microsoft.AspNetCore.Mvc;
 using SlaveryMarket.Data;
 using SlaveryMarket.Data.Entity;
 using SlaveryMarket.Data.Repository;
+using SlaveryMarket.Dtos;
+using SlaveryMarket.Services;
 
 namespace SlaveryMarket.Controllers;
 
-public class AccountController : BaseController
+public class AccountController(AuthService authService) : BaseController
 {
-    private readonly Repository<Janar> _repository;
-    private readonly Repository<Order> _orepository;
-
-    public AccountController(Repository<Janar> repository, Repository<Order> orepository)
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterUserDto registerUserDto)
     {
-        _repository = repository;
-        _orepository = orepository;
-    }
-
-    [HttpPost("add-janar")]
-    public IActionResult AddJanar([FromBody] string gender)
-    {
-        Janar janar = new Janar
+        var result = await authService.RegisterAsync(registerUserDto);
+        if (!result.Succeeded)
         {
-            Gender = gender
-        };
-        _repository.Add(janar);
-        
+            return BadRequest(result.Errors);
+        }
         return Ok();
     }
     
-    [HttpGet("get-janars")]
-    public IActionResult GetJanars()
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginUserDto loginUserDto)
     {
-        var janars = _repository.GetAll();
-        if(janars.Count == 0)
+        var result = await authService.Login(loginUserDto);
+        if (!result.Succeeded)
         {
-            return NotFound();
+            return BadRequest("Invalid username or password");
         }
-        return Ok(janars);
+        return Ok();
     }
 }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SlaveryMarket.Data.Entity;
@@ -9,7 +10,6 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
     {
-        
     }
 
     public DbSet<Janar> Janars { get; set; }
@@ -38,5 +38,13 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<OrderItem>()
             .HasOne(oi => oi.Product)
             .WithMany(p => p.OrderItems);
+
+        builder.Entity<IdentityRole>()
+            .HasData(new List<IdentityRole>
+            {
+                new() { Id = "1", Name = "Admin", NormalizedName = "ADMIN" },
+                new() { Id = "2", Name = "User", NormalizedName = "USER" },
+                new() { Id = "3", Name = "Shipper", NormalizedName = "SHIPPER" }
+            });
     }
 }
