@@ -1,7 +1,5 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SlaveryMarket.Data;
-using SlaveryMarket.Data.Entity;
-using SlaveryMarket.Data.Repository;
 using SlaveryMarket.Dtos;
 using SlaveryMarket.Services;
 
@@ -29,5 +27,20 @@ public class AccountController(AuthService authService) : BaseController
             return BadRequest("Invalid username or password");
         }
         return Ok();
+    }
+
+    [HttpPut("assign-role")]
+    public async Task<IActionResult> AssignRole(string role, Guid userId)
+    {
+        bool a = await authService.AssignRoleAsync(role, userId);
+
+        return Ok();
+    }
+    
+    [Authorize(Roles = "Admin")]
+    [HttpPost("keep-calm")]
+    public IActionResult KeepCalm()
+    {
+        return Ok("Keep calm and be an admin");
     }
 }

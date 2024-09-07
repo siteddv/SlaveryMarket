@@ -1,11 +1,18 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using SlaveryMarket.Data;
 using SlaveryMarket.Data.Entity;
 using SlaveryMarket.Dtos;
+using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace SlaveryMarket.Services;
 
 public class AuthService(UserManager<ApplicationUser> userManager,
-    SignInManager<ApplicationUser> signInManager)
+    SignInManager<ApplicationUser> signInManager,
+    AppDbContext dbContext)
 {
     
     public async Task<IdentityResult> RegisterAsync(RegisterUserDto registerUserDto)
@@ -16,7 +23,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             Email = registerUserDto.Email
         };
         
-        IdentityResult result = await userManager.CreateAsync(user, registerUserDto.Password);
+        var result = await userManager.CreateAsync(user, registerUserDto.Password);
         return result;
     }
 
@@ -29,5 +36,17 @@ public class AuthService(UserManager<ApplicationUser> userManager,
         var result = await signInManager
             .PasswordSignInAsync(loginUserDto.UserName, loginUserDto.Password, false, false);
         return result;
+    }
+    
+    public async Task<bool> AssignRoleAsync(string role, Guid userId)
+    {
+        var userIdString = userId.ToString();
+        
+        var user = dbContext
+            .Users
+            .FirstOrDefault(u => u.Id == userIdString);
+        
+        await userManager.AddToRoleAsync(user, role);
+        return true;
     }
 }

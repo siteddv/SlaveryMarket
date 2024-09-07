@@ -44,7 +44,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
             {
                 new() { Id = "1", Name = "Admin", NormalizedName = "ADMIN" },
                 new() { Id = "2", Name = "User", NormalizedName = "USER" },
-                new() { Id = "3", Name = "Shipper", NormalizedName = "SHIPPER" }
+                new() { Id = "3", Name = "Supplier", NormalizedName = "SUPPLIER" }
             });
     }
 }
