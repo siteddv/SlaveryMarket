@@ -5,7 +5,7 @@ using SlaveryMarket.Data.Entity;
 
 namespace SlaveryMarket.Data;
 
-public class AppDbContext : IdentityDbContext<ApplicationUser>
+public class AppDbContext : IdentityDbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options)
         : base(options)
