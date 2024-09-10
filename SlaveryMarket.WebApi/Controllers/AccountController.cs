@@ -28,19 +28,39 @@ public class AccountController(AuthService authService) : BaseController
         }
         return Ok();
     }
-
-    [HttpPut("assign-role")]
-    public async Task<IActionResult> AssignRole(string role, Guid userId)
-    {
-        bool a = await authService.AssignRoleAsync(role, userId);
-
-        return Ok();
-    }
     
     [Authorize(Roles = "Admin")]
     [HttpPost("keep-calm")]
     public IActionResult KeepCalm()
     {
         return Ok("Keep calm and be an admin");
+    }
+
+    [HttpPut("assign-role")]
+    public async Task<IActionResult> AssignRole(string roleId, Guid userId)
+    {
+        var result = await authService.AssignRoleAsync(roleId, userId);
+
+        if (!result.Succeeded)
+        {
+            return BadRequest(result.Errors);
+        }
+        
+        return Ok();
+    }
+    
+    [HttpGet("get-roles")]
+    public IActionResult GetRoles()
+    {
+        var roles = authService.GetRoles();
+        return Ok(roles);
+    }
+    
+    [Authorize]
+    [HttpGet("get-users-for-roles-assigning")]
+    public async Task<IActionResult> GetUsersForRolesAssigning()
+    {
+        var users = await authService.GetUsersForRolesAssigningAsync(HttpContext);
+        return Ok(users);
     }
 }

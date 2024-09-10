@@ -1,8 +1,5 @@
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SlaveryMarket.Data;
 using SlaveryMarket.Data.Entity;
 using SlaveryMarket.Dtos;
@@ -14,7 +11,6 @@ public class AuthService(UserManager<ApplicationUser> userManager,
     SignInManager<ApplicationUser> signInManager,
     AppDbContext dbContext)
 {
-    
     public async Task<IdentityResult> RegisterAsync(RegisterUserDto registerUserDto)
     {
         var user = new ApplicationUser
@@ -23,7 +19,7 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             Email = registerUserDto.Email
         };
         
-        var result = await userManager.CreateAsync(user, registerUserDto.Password);
+        IdentityResult result = await userManager.CreateAsync(user, registerUserDto.Password);
         return result;
     }
 
@@ -37,16 +33,30 @@ public class AuthService(UserManager<ApplicationUser> userManager,
             .PasswordSignInAsync(loginUserDto.UserName, loginUserDto.Password, false, false);
         return result;
     }
-    
-    public async Task<bool> AssignRoleAsync(string role, Guid userId)
+
+    public List<RoleDto> GetRoles()
     {
-        var userIdString = userId.ToString();
-        
-        var user = dbContext
+        return dbContext.Roles
+            .Select(r => new RoleDto(r.Id, r.Name))
+            .ToList();
+    }
+    
+    public async Task<List<UserDto>> GetUsersForRolesAssigningAsync(HttpContext httpContext)
+    {
+        var currentUser = await userManager.GetUserAsync(httpContext.User);
+        return await userManager
             .Users
-            .FirstOrDefault(u => u.Id == userIdString);
+            .Where(u => u.Id != currentUser.Id)
+            .Select(u => new UserDto(u.Id, u.UserName))
+            .ToListAsync();
+    }
+
+    public async Task<IdentityResult> AssignRoleAsync(string roleId, Guid userId)
+    {
+        var role = await dbContext.Roles
+            .FirstOrDefaultAsync(r => r.Id == roleId);
         
-        await userManager.AddToRoleAsync(user, role);
-        return true;
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        return await userManager.AddToRoleAsync(user, role.Name);
     }
 }
