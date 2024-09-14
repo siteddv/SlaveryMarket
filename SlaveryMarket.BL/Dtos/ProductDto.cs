@@ -1,4 +1,4 @@
-namespace SlaveryMarket.Dtos;
+namespace SlaveryMarket.BL.Dtos;
 
 public record ProductDto(
     string Name, 

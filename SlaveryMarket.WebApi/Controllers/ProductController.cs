@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using SlaveryMarket.BL.Dtos;
 using SlaveryMarket.Data.Entity;
 using SlaveryMarket.Data.Repository;
-using SlaveryMarket.Dtos;
 
 namespace SlaveryMarket.Controllers;
 

@@ -1,10 +1,13 @@
-using System.Text.Json.Serialization;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using SlaveryMarket.BL.Services;
 using SlaveryMarket.Data;
 using SlaveryMarket.Data.Entity;
 using SlaveryMarket.Data.Repository;
-using SlaveryMarket.Services;
 
 namespace SlaveryMarket;
 
@@ -16,7 +19,38 @@ public class Program
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(c =>
+        {
+            var securityScheme = new OpenApiSecurityScheme
+            {
+                Name = "JWT Authentication",
+                Description = "Enter your JWT token in this field",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT"
+            };
+
+            c.AddSecurityDefinition("Bearer", securityScheme);
+
+            var securityRequirement = new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    new string[] {}
+                }
+            };
+
+            c.AddSecurityRequirement(securityRequirement);
+
+        });
         builder.Services.AddScoped<AuthService>();
 
         builder.Services.AddDbContext<AppDbContext>(options =>
@@ -31,7 +65,24 @@ public class Program
         builder.Services.AddScoped(typeof(Repository<>));
         builder.Services.AddScoped<ProductRepository>();
         builder.Services.AddScoped<ExceptionMiddleware>();
-        
+
+        var key = Encoding.ASCII.GetBytes("gXcsTOS3uPu/Bf1IVe4CC6yLRnlVJYW9HyT35WZ8a4w=");
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key)
+            };
+        });
 
         var app = builder.Build();
         
@@ -43,6 +94,7 @@ public class Program
 
         app.UseMiddleware<ExceptionMiddleware>();
         app.UseHttpsRedirection();
+        app.UseAuthentication(); // Add this line
         app.UseAuthorization();
         app.MapControllers();
 

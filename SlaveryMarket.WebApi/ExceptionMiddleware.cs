@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using SlaveryMarket.Helpers;
 
 namespace SlaveryMarket;
 
@@ -16,7 +17,9 @@ public class ExceptionMiddleware : IMiddleware
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             context.Response.ContentType = "application/json";
 
-            var json = JsonSerializer.Serialize(ex.Message);
+            var result = Result<object>.InternalServerError(ex.Message);
+            
+            var json = JsonSerializer.Serialize(result);
 
             await context.Response.WriteAsync(json);
         }
