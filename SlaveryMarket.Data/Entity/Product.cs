@@ -15,7 +15,11 @@ public class Product : BaseEntity
     
     [Range(0, 1000000)]
     public decimal Price { get; set; }
+
+    public float Rate { get; set; }
     
     public List<OrderItem> OrderItems { get; set; }
+    
+    public List<ProductCategory> ProductCategories { get; set; }
 }
 

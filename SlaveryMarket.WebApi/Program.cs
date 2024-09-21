@@ -16,7 +16,6 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(c =>
@@ -24,7 +23,7 @@ public class Program
             var securityScheme = new OpenApiSecurityScheme
             {
                 Name = "JWT Authentication",
-                Description = "Enter your JWT token in this field",
+                Description = "Enter your JWT token in this field to authenticate",
                 In = ParameterLocation.Header,
                 Type = SecuritySchemeType.Http,
                 Scheme = "bearer",
@@ -44,7 +43,7 @@ public class Program
                             Id = "Bearer"
                         }
                     },
-                    new string[] {}
+                    []
                 }
             };
 
@@ -55,7 +54,7 @@ public class Program
 
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(
-                "User ID=postgres; Password=sa;Host=localHost; Port=5432; Database=postgres; Pooling=True; Include Error Detail=True;", 
+                builder.Configuration.GetConnectionString("DefaultConnection"), 
                 b=> b.MigrationsAssembly("SlaveryMarket.Data")));
         
         builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
@@ -86,15 +85,12 @@ public class Program
 
         var app = builder.Build();
         
-        if (app.Environment.IsDevelopment())
-        {
             app.UseSwagger();
             app.UseSwaggerUI();
-        }
 
         app.UseMiddleware<ExceptionMiddleware>();
         app.UseHttpsRedirection();
-        app.UseAuthentication(); // Add this line
+        app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
 

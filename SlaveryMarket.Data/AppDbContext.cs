@@ -17,6 +17,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<Client> Clients { get; set; }
+    public DbSet<ProductCategory> ProductCategories { get; set; }
+    public DbSet<Category> Categories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -46,5 +48,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
                 new() { Id = "2", Name = "User", NormalizedName = "USER" },
                 new() { Id = "3", Name = "Supplier", NormalizedName = "SUPPLIER" }
             });
+        
+        builder.Entity<ProductCategory>()
+            .HasKey(pc => new { pc.ProductId, pc.CategoryId });
     }
 }

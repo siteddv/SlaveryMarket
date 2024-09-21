@@ -32,6 +32,10 @@ public class AuthService(UserManager<ApplicationUser> userManager,
         var user = await userManager.FindByNameAsync(loginUserDto.UserName);
         if (user == null)
             return null;
+        
+        var result = await signInManager.CheckPasswordSignInAsync(user, loginUserDto.Password, false);
+        if (!result.Succeeded)
+            return null;
 
         var roles = await userManager.GetRolesAsync(user);
         return GenerateToken(user.UserName, roles);

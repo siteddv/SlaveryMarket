@@ -1,41 +1,27 @@
 using Microsoft.AspNetCore.Mvc;
 using SlaveryMarket.BL.Dtos;
+using SlaveryMarket.BL.Services;
 using SlaveryMarket.Data.Entity;
 using SlaveryMarket.Data.Repository;
 
 namespace SlaveryMarket.Controllers;
 
-public class ProductController : BaseController
+public class ProductController(ProductService service) : BaseController
 {
-    private readonly ProductRepository _repository;
-
-    public ProductController(ProductRepository repository)
-    {
-        _repository = repository;
-    }
-
     [HttpPost("add-product")]
     public IActionResult AddProduct([FromBody] ProductDto product)
     {
-        Product newProduct = new Product
-        {
-            Name = product.Name,
-            Description = product.Description,
-            Price = product.Price
-        };
-        
-        var addedProduct =  _repository.Add(newProduct);
+        var addedProduct = service.AddProduct(product);
         return Ok(addedProduct);
     }
     
     [HttpGet("get-products")]
     public IActionResult GetProducts()
     {
-        var products = _repository.GetAll();
+        var products = service.GetProducts();
         if(products.Count == 0)
-        {
             return NotFound();
-        }
+        
         return Ok(products);
     }
 }
